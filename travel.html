@@ -1,0 +1,296 @@
+import { useState, useEffect, useRef } from "react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Backpack, Sparkles, Zap, MapPin, Star, ChevronLeft, ChevronRight, Instagram, Music, Check, ArrowRight } from "lucide-react";
+import VibeQuizModal from "@/components/VibeQuizModal";
+
+import heroImg from "@/assets/hero-mumbai.jpg";
+import gemStreet from "@/assets/gem-street-art.jpg";
+import gemTrek from "@/assets/gem-monsoon-trek.jpg";
+import gemBeach from "@/assets/gem-beach-yoga.jpg";
+import gemRooftop from "@/assets/gem-rooftop.jpg";
+
+function useInView(threshold = 0.15) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setVisible(true); }, { threshold });
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [threshold]);
+  return { ref, visible };
+}
+
+const gems = [
+  { img: gemStreet, title: "Midnight Street-Art Bike Tour", location: "Mumbai", tag: "🎨 After Dark" },
+  { img: gemTrek, title: "Monsoon Waterfall Trek", location: "Lonavala", tag: "🌧️ Adventure" },
+  { img: gemBeach, title: "Secret Beach Clean-Up Yoga", location: "Goa", tag: "🧘 Wellness" },
+  { img: gemRooftop, title: "Hidden Rooftop Supper Club", location: "Mumbai", tag: "🍽️ Foodie" },
+];
+
+const testimonials = [
+  { name: "Aanya, 22", text: "Literally found a waterfall I didn't know existed 30 mins from my house. Travel Junkey is unreal 🤯", stars: 5 },
+  { name: "Rohan, 20", text: "The vibe quiz nailed my personality. Got a midnight bike tour reco and it was the best night ever 🔥", stars: 5 },
+  { name: "Priya, 23", text: "Connected my Spotify and it suggested a beach party with my fav artist's music. Obsessed! 💜", stars: 5 },
+  { name: "Arjun, 21", text: "₹499/month for unlimited AI trip plans? Shut up and take my money. Already did 4 trips this month 🚀", stars: 5 },
+];
+
+export default function Index() {
+  const [quizOpen, setQuizOpen] = useState(false);
+  const [tIdx, setTIdx] = useState(0);
+  const howIt = useInView();
+  const gemsSection = useInView();
+  const pricingSection = useInView();
+
+  useEffect(() => {
+    const t = setInterval(() => setTIdx((i) => (i + 1) % testimonials.length), 4000);
+    return () => clearInterval(t);
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
+      {/* NAV */}
+      <nav className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md border-b border-border/50">
+        <div className="container flex items-center justify-between h-14">
+          <div className="flex items-center gap-2">
+            <Backpack className="w-6 h-6 text-primary" />
+            <span className="font-heading font-bold text-lg">Travel Junkey</span>
+          </div>
+          <Button size="sm" onClick={() => setQuizOpen(true)} className="bg-primary text-primary-foreground hover:opacity-90 font-heading text-xs">
+            Start Quiz <Sparkles className="w-3 h-3 ml-1" />
+          </Button>
+        </div>
+      </nav>
+
+      {/* HERO */}
+      <section className="relative min-h-screen flex items-center justify-center pt-14">
+        <div className="absolute inset-0">
+          <img src={heroImg} alt="Mumbai skyline at night" className="w-full h-full object-cover" width={1920} height={1080} />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-background/30" />
+        </div>
+        <div className="relative z-10 container text-center max-w-3xl space-y-6 px-4">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/30 bg-primary/10 text-primary text-xs font-medium animate-glow-pulse">
+            <Zap className="w-3 h-3" /> AI-Powered Micro Adventures
+          </div>
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-heading font-bold leading-tight">
+            Feed your travel junkey.{" "}
+            <span className="gradient-text">AI that plans trips as wild as you.</span>
+          </h1>
+          <p className="text-muted-foreground text-base sm:text-lg max-w-xl mx-auto">
+            30-second vibe quiz → instant personalized micro-adventures in Mumbai, Lonavala, Goa & beyond
+          </p>
+          <Button size="lg" onClick={() => setQuizOpen(true)} className="bg-primary text-primary-foreground hover:opacity-90 font-heading text-base px-8 box-glow-cyan animate-float">
+            Start Free Vibe Quiz <ArrowRight className="w-4 h-4 ml-2" />
+          </Button>
+          <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground pt-2 flex-wrap">
+            <span className="flex items-center gap-1"><MapPin className="w-3 h-3 text-primary" /> Mumbai First</span>
+            <span className="flex items-center gap-1"><Sparkles className="w-3 h-3 text-secondary" /> AI Powered</span>
+            <span className="flex items-center gap-1"><Star className="w-3 h-3 text-neon-orange" /> 10,000+ Gen Z Junkeys</span>
+          </div>
+        </div>
+      </section>
+
+      {/* HOW IT WORKS */}
+      <section ref={howIt.ref} className="py-20 bg-card/50">
+        <div className="container max-w-4xl">
+          <h2 className="text-3xl font-heading font-bold text-center mb-12">
+            How It <span className="text-primary">Works</span>
+          </h2>
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              { icon: Sparkles, title: "Take the Vibe Quiz", desc: "30 secs. Pick your mood, energy & crew size.", color: "text-primary", delay: 0 },
+              { icon: Zap, title: "AI Magic ✨", desc: "Our AI matches you with hidden gems & micro-adventures.", color: "text-secondary", delay: 150 },
+              { icon: MapPin, title: "Book & Vibe", desc: "One-tap booking. Show up. Have the time of your life.", color: "text-accent", delay: 300 },
+            ].map((s, i) => (
+              <Card
+                key={i}
+                className={`p-6 bg-card border-border text-center space-y-3 transition-all duration-500 hover:border-primary/50 hover:box-glow-cyan ${
+                  howIt.visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+                }`}
+                style={{ transitionDelay: `${s.delay}ms` }}
+              >
+                <div className="mx-auto w-12 h-12 rounded-full bg-muted flex items-center justify-center">
+                  <s.icon className={`w-6 h-6 ${s.color}`} />
+                </div>
+                <h3 className="font-heading font-semibold text-lg">{s.title}</h3>
+                <p className="text-muted-foreground text-sm">{s.desc}</p>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* HIDDEN GEMS */}
+      <section ref={gemsSection.ref} className="py-20">
+        <div className="container max-w-5xl">
+          <h2 className="text-3xl font-heading font-bold text-center mb-3">
+            Hidden Gems <span className="text-secondary">Waiting for You</span>
+          </h2>
+          <p className="text-muted-foreground text-center mb-10 text-sm">Curated by AI. Loved by 10,000+ Junkeys.</p>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {gems.map((g, i) => (
+              <div
+                key={i}
+                className={`group rounded-xl overflow-hidden border border-border bg-card transition-all duration-500 hover:border-secondary/50 hover:box-glow-magenta ${
+                  gemsSection.visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+                }`}
+                style={{ transitionDelay: `${i * 100}ms` }}
+              >
+                <div className="aspect-[4/5] overflow-hidden">
+                  <img src={g.img} alt={g.title} loading="lazy" width={640} height={800} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                </div>
+                <div className="p-4 space-y-1">
+                  <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-secondary/10 text-secondary">{g.tag}</span>
+                  <h3 className="font-heading font-semibold text-sm leading-snug">{g.title}</h3>
+                  <p className="text-muted-foreground text-xs flex items-center gap-1"><MapPin className="w-3 h-3" /> {g.location}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* SOCIAL CONNECT */}
+      <section className="py-16 bg-card/50">
+        <div className="container max-w-2xl text-center space-y-5">
+          <h2 className="text-2xl font-heading font-bold">
+            Not sure where to go? 🤔
+          </h2>
+          <p className="text-muted-foreground text-sm">
+            Connect your Instagram or Spotify for instant AI-powered recommendations based on your actual vibe.
+          </p>
+          <div className="flex justify-center gap-3 flex-wrap">
+            <Button variant="outline" className="gap-2 border-border hover:border-secondary hover:text-secondary font-heading text-sm">
+              <Instagram className="w-4 h-4" /> Connect Instagram
+            </Button>
+            <Button variant="outline" className="gap-2 border-border hover:border-accent hover:text-accent font-heading text-sm">
+              <Music className="w-4 h-4" /> Connect Spotify
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* TESTIMONIALS */}
+      <section className="py-20">
+        <div className="container max-w-2xl text-center">
+          <h2 className="text-3xl font-heading font-bold mb-10">
+            What <span className="text-primary">Junkeys</span> Say
+          </h2>
+          <div className="relative min-h-[140px]">
+            {testimonials.map((t, i) => (
+              <div
+                key={i}
+                className={`absolute inset-0 transition-all duration-500 ${
+                  i === tIdx ? "opacity-100 translate-x-0" : i < tIdx ? "opacity-0 -translate-x-10" : "opacity-0 translate-x-10"
+                }`}
+              >
+                <div className="flex justify-center gap-1 mb-3">
+                  {Array.from({ length: t.stars }).map((_, s) => (
+                    <Star key={s} className="w-4 h-4 text-neon-orange fill-neon-orange" />
+                  ))}
+                </div>
+                <p className="text-lg italic text-foreground/90 mb-3">"{t.text}"</p>
+                <p className="text-muted-foreground text-sm font-medium">— {t.name}</p>
+              </div>
+            ))}
+          </div>
+          <div className="flex justify-center gap-3 mt-6">
+            <button onClick={() => setTIdx((i) => (i - 1 + testimonials.length) % testimonials.length)} className="p-2 rounded-full border border-border hover:border-primary transition-colors">
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <button onClick={() => setTIdx((i) => (i + 1) % testimonials.length)} className="p-2 rounded-full border border-border hover:border-primary transition-colors">
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* PRICING */}
+      <section ref={pricingSection.ref} className="py-20 bg-card/50">
+        <div className="container max-w-3xl">
+          <h2 className="text-3xl font-heading font-bold text-center mb-10">
+            Simple <span className="gradient-text">Pricing</span>
+          </h2>
+          <div className="grid md:grid-cols-2 gap-6">
+            {[
+              {
+                name: "Free Forever",
+                price: "₹0",
+                desc: "Get started with AI travel",
+                features: ["Vibe Quiz access", "3 AI recommendations/month", "Community access"],
+                cta: "Get Started",
+                highlight: false,
+              },
+              {
+                name: "Junkey Pass",
+                price: "₹499",
+                period: "/month",
+                desc: "Unlimited AI-powered adventures",
+                features: ["Unlimited AI recommendations", "Priority booking", "Instagram/Spotify AI", "Exclusive hidden gems", "24/7 trip concierge"],
+                cta: "Start Free Trial",
+                highlight: true,
+              },
+            ].map((plan, i) => (
+              <Card
+                key={i}
+                className={`p-6 space-y-4 transition-all duration-500 ${
+                  plan.highlight ? "border-primary box-glow-cyan bg-card" : "border-border bg-card"
+                } ${pricingSection.visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
+                style={{ transitionDelay: `${i * 150}ms` }}
+              >
+                {plan.highlight && (
+                  <span className="inline-block text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-primary/10 text-primary">Most Popular</span>
+                )}
+                <h3 className="font-heading font-bold text-xl">{plan.name}</h3>
+                <div>
+                  <span className="text-3xl font-heading font-bold">{plan.price}</span>
+                  {plan.period && <span className="text-muted-foreground text-sm">{plan.period}</span>}
+                </div>
+                <p className="text-muted-foreground text-sm">{plan.desc}</p>
+                <ul className="space-y-2">
+                  {plan.features.map((f, fi) => (
+                    <li key={fi} className="flex items-center gap-2 text-sm">
+                      <Check className="w-4 h-4 text-primary shrink-0" />
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+                <Button
+                  className={`w-full font-heading ${
+                    plan.highlight
+                      ? "bg-primary text-primary-foreground hover:opacity-90"
+                      : "bg-muted text-foreground hover:bg-muted/80"
+                  }`}
+                >
+                  {plan.cta}
+                </Button>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FOOTER */}
+      <footer className="py-10 border-t border-border">
+        <div className="container text-center space-y-3">
+          <div className="flex items-center justify-center gap-2">
+            <Backpack className="w-5 h-5 text-primary" />
+            <span className="font-heading font-bold">Travel Junkey</span>
+          </div>
+          <p className="text-muted-foreground text-xs">
+            Built with AI love ❤️ • Mumbai, India
+          </p>
+          <div className="flex justify-center gap-4 text-xs text-muted-foreground">
+            <button className="hover:text-primary transition-colors">Privacy</button>
+            <button className="hover:text-primary transition-colors">Terms</button>
+            <button className="hover:text-primary transition-colors">Contact</button>
+          </div>
+        </div>
+      </footer>
+
+      <VibeQuizModal open={quizOpen} onOpenChange={setQuizOpen} />
+    </div>
+  );
+}
